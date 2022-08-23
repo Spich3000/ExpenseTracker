@@ -13,6 +13,18 @@ class ExpenseViewModel: ObservableObject {
     @Published var endDate: Date = Date()
     @Published var currentMonthStartDate: Date = Date()
     
+    // Expense/Income tab
+    @Published var tabName: ExpenseType = .expense
+    //Filter view
+    @Published var showFilterView = false
+    // New expense properties
+    @Published var addNewExpense = false
+    @Published var amount: String = ""
+    @Published var type: ExpenseType = .all
+    @Published var date = Date()
+    @Published var remark: String = ""
+    
+    
     init() {
         // Fetching current month Starting Date
         let calendar = Calendar.current
@@ -20,7 +32,6 @@ class ExpenseViewModel: ObservableObject {
         
         startDate = calendar.date(from: components)!
         currentMonthStartDate = calendar.date(from: components)!
-        
     }
     
     // Sample
@@ -36,18 +47,20 @@ class ExpenseViewModel: ObservableObject {
             value = expenses.reduce(0, { partialResult, expense in
                 return partialResult + (type == .all ? (expense.type == .income ? expense.amount : -expense.amount) : (expense.type == type ? expense.amount : 0))
             })
-            
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .currency
-            
-            return formatter.string(from: .init(value: value)) ?? "$0.00"
-        
+           return convertNumberToPrice(value: value)
     }
     
+    // Convert selected dates to string
+    func convertDateToString() -> String {
+        return startDate.formatted(date: .abbreviated, time: .omitted) + " - " + endDate.formatted(date: .abbreviated, time: .omitted)
+    }
     
     // Converting number to price
-    func convertNumberToPrice() {
+    func convertNumberToPrice(value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
         
+        return formatter.string(from: .init(value: value)) ?? "$0.00"
     }
     
 }
