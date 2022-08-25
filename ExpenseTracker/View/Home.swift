@@ -46,9 +46,40 @@ struct Home: View {
         }
         .background(Color("BG").ignoresSafeArea())
         .fullScreenCover(isPresented: $viewModel.addNewExpense) {
+            viewModel.clearData()
+        } content: {
             NewExpense()
                 .environmentObject(viewModel)
         }
+        .overlay(alignment: .bottomTrailing) {
+            AddButton()
+        }
+    }
+    
+    // Add new Expense Button
+    @ViewBuilder
+    func AddButton() -> some View {
+        Button {
+            viewModel.addNewExpense.toggle()
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 25, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 55, height: 55)
+                .background {
+                    Circle()
+                        .fill(
+                            .linearGradient(colors: [
+                            Color("Gradient1"),
+                            Color("Gradient2"),
+                            Color("Gradient3"),
+                            ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                }
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 5, y: 5)
+            
+        }
+        .padding()
     }
     
     // MARK: Transactions View

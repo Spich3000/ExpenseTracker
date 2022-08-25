@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ExpenseViewModel: ObservableObject {
     
@@ -61,6 +62,30 @@ class ExpenseViewModel: ObservableObject {
         formatter.numberStyle = .currency
         
         return formatter.string(from: .init(value: value)) ?? "$0.00"
+    }
+    
+    // clear all data
+    func clearData() {
+        date = Date()
+        type = .all
+        remark = ""
+        amount = ""
+    }
+    
+    // save Data
+    func saveData(env: EnvironmentValues) {
+        // Add coredata atfirst
+        print("Save")
+        let amountInDouble = (amount as NSString).doubleValue
+        let colors = ["Yellow", "Red", "Purple", "Green"]
+        let expense = Expense(remark: remark, amount: amountInDouble, date: date, type: type, color: colors.randomElement() ?? "Yellow")
+        withAnimation {
+            expenses.append(expense)
+            expenses = expenses.sorted(by: { first, scnd in
+                return scnd.date < first.date
+            })
+            env.dismiss()
+        }
     }
     
 }
